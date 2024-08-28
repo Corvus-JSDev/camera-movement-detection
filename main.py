@@ -1,6 +1,7 @@
 from pprint import pp
 import cv2 as cv  # Note: cv2 uses BGR instead of RGB
 import time
+from email import send_email
 
 video = cv.VideoCapture(0)
 time.sleep(1)  # Wait 1 second for the camera to load
@@ -36,6 +37,8 @@ print("Frame 5")
 pp(frame5)
 """
 
+status_list = []
+
 first_frame = None
 while True:
 	#* Grab the frame from the camera
@@ -57,10 +60,27 @@ while True:
 	#* Add a green box around new objects
 	contours, check = cv.findContours(dil_frame, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
+	status = 0
 	for contour in contours:
 		if not cv.contourArea(contour) < 10_000:
 			x, y, w, h = cv.boundingRect(contour)
-			cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+			rectangle = cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+			if rectangle.any():
+				status = 1
+
+
+	#* Send an email only after the thing has left the frame
+	status_list.append(status)
+	status_list = status_list[-2:]  # Only hold the last 2 items
+	"""
+	There are 4 possible combos for this
+	[0, 0] - Nothing is in the frame
+	[1, 1] - Somthing is currently in the frame
+	[0, 1] - Something has just entered the frame
+	[1, 0] - Something has just exited the frame
+	"""
+	if status_list[0] == 1 and status_list[1] == 0:
+		send_email()
 
 	#* Show the video
 	cv.imshow("My Video", frame)
