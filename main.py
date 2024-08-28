@@ -2,6 +2,7 @@ from pprint import pp
 import cv2 as cv  # Note: cv2 uses BGR instead of RGB
 import time
 from email import send_email
+import glob
 
 video = cv.VideoCapture(0)
 time.sleep(1)  # Wait 1 second for the camera to load
@@ -38,6 +39,7 @@ pp(frame5)
 """
 
 status_list = []
+count = 1
 
 first_frame = None
 while True:
@@ -67,6 +69,10 @@ while True:
 			rectangle = cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 			if rectangle.any():
 				status = 1
+				#* Save the image of the detected object
+				cv.imwrite(f"images/{count}.jpg", frame)
+				count += 1
+
 
 
 	#* Send an email only after the thing has left the frame
@@ -80,7 +86,10 @@ while True:
 	[1, 0] - Something has just exited the frame
 	"""
 	if status_list[0] == 1 and status_list[1] == 0:
-		send_email()
+		file_names = glob.glob("images/*.jpg")
+		file_number = round(len(file_names) / 2)
+		file_to_send = f"images/{file_number}.jpg"
+		send_email(file_to_send)
 
 	#* Show the video
 	cv.imshow("My Video", frame)

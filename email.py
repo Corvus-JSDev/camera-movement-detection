@@ -1,2 +1,2 @@
-def send_email():
-	print("email was sent")
+def send_email(file_to_send):
+	print(f"{file_to_send} was sent")
