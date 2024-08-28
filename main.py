@@ -48,6 +48,7 @@ while True:
 		first_frame = gray_frame_blur
 
 	delta_frame = cv.absdiff(first_frame, gray_frame_blur)
+	thresh_frame = cv.threshold(delta_frame, 30, 255, cv.THRESH_BINARY)[1]  # Any value >30 will be pure white, <30 will be pure black
 
 	# Quit if the q key is pressed
 	key = cv.waitKey(1)
