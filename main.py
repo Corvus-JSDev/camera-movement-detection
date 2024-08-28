@@ -38,7 +38,10 @@ pp(frame5)
 
 while True:
 	check, frame = video.read()
-	cv.imshow("My Video", frame)
+	gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)  # Convert the original frame to grayscale
+	gray_frame_gau = cv.GaussianBlur(gray_frame, (21, 21), 0)  # Add some blur to remove detail and make it easier on the system
+
+	cv.imshow("My Video", gray_frame_gau)
 
 	# Quit if the q key is pressed
 	key = cv.waitKey(1)
