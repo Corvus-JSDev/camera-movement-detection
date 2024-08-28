@@ -36,12 +36,18 @@ print("Frame 5")
 pp(frame5)
 """
 
+first_frame = None
 while True:
 	check, frame = video.read()
-	gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)  # Convert the original frame to grayscale
-	gray_frame_gau = cv.GaussianBlur(gray_frame, (21, 21), 0)  # Add some blur to remove detail and make it easier on the system
+	# Convert the frame to grayscale and add some blur to make it easier on the system
+	gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+	gray_frame_blur = cv.GaussianBlur(gray_frame, (11, 11), 0)  # Note: The blur value must be an odd number
+	cv.imshow("My Video", gray_frame_blur)
 
-	cv.imshow("My Video", gray_frame_gau)
+	if first_frame is None:
+		first_frame = gray_frame_blur
+
+	delta_frame = cv.absdiff(first_frame, gray_frame_blur)
 
 	# Quit if the q key is pressed
 	key = cv.waitKey(1)
