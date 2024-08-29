@@ -4,6 +4,7 @@ import time
 from send_email import send_email
 import glob
 import os
+from threading import Thread
 
 video = cv.VideoCapture(0)
 time.sleep(1)  # Wait 1 second for the camera to load
@@ -91,13 +92,11 @@ while True:
 		file_names = glob.glob("images/*.jpg")
 		file_number = round(len(file_names) / 2)
 		img_to_send = file_names[file_number]
-		send_email(img_to_send)
 
-		# Delete all unneeded imgs
-		unneeded_imgs = glob.glob('images/*.jpg')
-		for file in unneeded_imgs:
-			os.remove(file)
-		print("All imgs removed")
+		# Add Threading to allow tasks to run in the background
+		sending_email_thread = Thread(target=send_email, args=(img_to_send, ))
+		sending_email_thread.daemon = True
+		sending_email_thread.start()
 
 	#* Show the video
 	cv.imshow("My Video", frame)
@@ -110,3 +109,9 @@ while True:
 
 # clean up resources associated with video capture, preventing resource leaks
 video.release()
+
+# Delete all unneeded imgs
+unneeded_imgs = glob.glob('images/*.jpg')
+for file in unneeded_imgs:
+	os.remove(file)
+print("All imgs removed")
