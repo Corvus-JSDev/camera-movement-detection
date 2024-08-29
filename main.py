@@ -95,7 +95,6 @@ while True:
 
 		# Delete all unneeded imgs
 		unneeded_imgs = glob.glob('images/*.jpg')
-		print(unneeded_imgs)
 		for file in unneeded_imgs:
 			os.remove(file)
 		print("All imgs removed")
