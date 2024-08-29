@@ -1,7 +1,7 @@
 from pprint import pp
 import cv2 as cv  # Note: cv2 uses BGR instead of RGB
 import time
-from email import send_email
+from send_email import send_email
 import glob
 import os
 
