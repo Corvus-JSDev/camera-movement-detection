@@ -3,6 +3,7 @@ import cv2 as cv  # Note: cv2 uses BGR instead of RGB
 import time
 from email import send_email
 import glob
+import os
 
 video = cv.VideoCapture(0)
 time.sleep(1)  # Wait 1 second for the camera to load
@@ -86,10 +87,18 @@ while True:
 	[1, 0] - Something has just exited the frame
 	"""
 	if status_list[0] == 1 and status_list[1] == 0:
+		# Find and send the correct file
 		file_names = glob.glob("images/*.jpg")
 		file_number = round(len(file_names) / 2)
-		file_to_send = f"images/{file_number}.jpg"
-		send_email(file_to_send)
+		img_to_send = file_names[file_number]
+		send_email(img_to_send)
+
+		# Delete all unneeded imgs
+		unneeded_imgs = glob.glob('images/*.jpg')
+		print(unneeded_imgs)
+		for file in unneeded_imgs:
+			os.remove(file)
+		print("All imgs removed")
 
 	#* Show the video
 	cv.imshow("My Video", frame)
